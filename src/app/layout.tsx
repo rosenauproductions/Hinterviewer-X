@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { config } from "@/lib/config";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Hinterviewer X - Video Resume Platform",
-  description: "Create compelling video resumes with Hinterviewer X",
+  title: `${config.client.name} - Video Resume Platform`,
+  description: `Create compelling video resumes with ${config.client.name}`,
 };
 
 export default function RootLayout({

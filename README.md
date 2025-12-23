@@ -1,36 +1,112 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Hinterviewer X - Video Resume Platform
 
-## Getting Started
+A comprehensive video resume platform built with Next.js 14+, Supabase, and Tailwind CSS.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Multi-client deployment support
+- Video recording and upload
+- Applicant and admin dashboards
+- Playlist generation and playback
+- Supabase authentication with role-based access
+- Responsive design
+
+## Quick Start
+
+### Prerequisites
+
+- Node.js 18+
+- npm or yarn
+- Supabase account
+
+### Local Development
+
+1. Clone the repository
+2. Copy `.env.example` to `.env.local` and fill in your values
+3. Run the Supabase schema in your Supabase project SQL editor
+4. Install dependencies: `npm install`
+5. Start development server: `npm run dev`
+
+## Multi-Client Deployment
+
+This application supports deploying to multiple clients with isolated databases.
+
+### For Each Client:
+
+1. **Create Supabase Project**
+   - Go to supabase.com and create a new project
+   - Run the SQL from `supabase-schema.sql` in the SQL Editor
+
+2. **Set Up Vercel Project**
+   - Create a new Vercel project connected to this GitHub repo
+   - Configure environment variables in Vercel dashboard:
+     ```
+     NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+     NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+     SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+     NEXT_PUBLIC_CLIENT_NAME=Client Company Name
+     NEXT_PUBLIC_CLIENT_LOGO_URL=/logo.png
+     NEXT_PUBLIC_CLIENT_PRIMARY_COLOR=#3b82f6
+     NEXT_PUBLIC_CLIENT_SECONDARY_COLOR=#64748b
+     NEXT_PUBLIC_CLIENT_ID=client-1
+     ```
+
+3. **Deploy**
+   - Vercel will automatically deploy on git push
+   - Each client gets their own subdomain or custom domain
+
+### Environment Variables
+
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL | Yes |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon key | Yes |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key | Yes |
+| `NEXT_PUBLIC_CLIENT_NAME` | Client company name | No |
+| `NEXT_PUBLIC_CLIENT_LOGO_URL` | Logo URL path | No |
+| `NEXT_PUBLIC_CLIENT_PRIMARY_COLOR` | Primary brand color | No |
+| `NEXT_PUBLIC_CLIENT_SECONDARY_COLOR` | Secondary brand color | No |
+| `NEXT_PUBLIC_CLIENT_ID` | Unique client identifier | No |
+
+## Project Structure
+
+```
+src/
+├── app/                    # Next.js App Router pages
+│   ├── applicant/         # Applicant-facing pages
+│   ├── admin/            # Admin pages
+│   ├── auth/             # Authentication pages
+│   └── api/              # API routes
+├── components/            # Reusable components
+├── lib/                  # Utilities and configurations
+└── types/                # TypeScript types
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Tech Stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Framework:** Next.js 14+ (App Router)
+- **Database:** Supabase (PostgreSQL)
+- **Styling:** Tailwind CSS + shadcn/ui
+- **Authentication:** Supabase Auth
+- **Deployment:** Vercel
+- **Video:** react-media-recorder, video.js
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Development
 
-## Learn More
+```bash
+npm run dev          # Start development server
+npm run build        # Build for production
+npm run start        # Start production server
+npm run lint         # Run ESLint
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Contributing
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Create a feature branch
+2. Make your changes
+3. Test thoroughly
+4. Submit a pull request
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## License
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This project is licensed under the MIT License.
