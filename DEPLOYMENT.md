@@ -96,6 +96,7 @@ Supabase **Authentication → URL configuration**: add your Netlify site URL to 
 |---------|-----|
 | Build fails immediately | Env vars missing in Netlify — add before deploy |
 | Site shows **Setup required** | Open `/setup`; fix URL/key format (`https://….supabase.co`, JWT anon key) |
+| Login: **Database error querying schema** | Run `supabase-fix-auth-users.sql` (UPDATE only). If SQL permission denied, **delete** the broken user in **Authentication → Users**, then **Add user** via Dashboard, set `profiles.role = super_admin` in Table Editor |
 | Login works but empty questions | Re-run `supabase-schema.sql` (seed questions at bottom) |
 | Build worked locally, failed on Netlify | Netlify env vars are separate from `.env.local` |
 
