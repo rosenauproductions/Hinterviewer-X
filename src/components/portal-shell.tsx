@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { getClientTheme, themeGradient } from '@/lib/theme'
+import { PortalSessionBar } from '@/components/portal-session-bar'
 
 interface PortalShellProps {
   children: React.ReactNode
@@ -29,14 +30,17 @@ export function PortalShell({ children, showBack }: PortalShellProps) {
             priority
           />
         </Link>
-        {showBack && (
-          <Link
-            href={showBack.href}
-            className="text-sm opacity-80 hover:opacity-100 transition-opacity"
-          >
-            ← {showBack.label}
-          </Link>
-        )}
+        <div className="flex items-center gap-4">
+          <PortalSessionBar />
+          {showBack && (
+            <Link
+              href={showBack.href}
+              className="text-sm opacity-80 hover:opacity-100 transition-opacity"
+            >
+              ← {showBack.label}
+            </Link>
+          )}
+        </div>
       </header>
       <main className="max-w-6xl mx-auto px-5 pb-12">{children}</main>
     </div>

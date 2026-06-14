@@ -1,11 +1,12 @@
 'use client'
 
-import { Suspense, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { getSupabaseBrowserClient } from '@/lib/supabase'
 import { homePathForRole } from '@/lib/auth-routing'
 import { PortalShell } from '@/components/portal-shell'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { getClientTheme } from '@/lib/theme'
+import Link from 'next/link'
 
 function LoginForm() {
   const theme = getClientTheme()
@@ -13,9 +14,34 @@ function LoginForm() {
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [existing, setExisting] = useState<{ email: string; role: string | null; home: string } | null>(null)
   const router = useRouter()
   const searchParams = useSearchParams()
   const callbackError = searchParams.get('error')
+
+  useEffect(() => {
+    ;(async () => {
+      try {
+        const supabase = await getSupabaseBrowserClient()
+        const {
+          data: { user },
+        } = await supabase.auth.getUser()
+        if (!user?.email) return
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', user.id)
+          .maybeSingle()
+        setExisting({
+          email: user.email,
+          role: profile?.role ?? null,
+          home: homePathForRole(profile?.role),
+        })
+      } catch {
+        /* ignore */
+      }
+    })()
+  }, [])
 
   const redirectAfterAuth = async () => {
     const supabase = await getSupabaseBrowserClient()
@@ -49,6 +75,7 @@ function LoginForm() {
 
     try {
       const supabase = await getSupabaseBrowserClient()
+      await supabase.auth.signOut()
       const { error: signInError } = await supabase.auth.signInWithPassword({ email, password })
       if (signInError) {
         setError(signInError.message)
@@ -89,6 +116,25 @@ function LoginForm() {
         Sign In
       </h2>
       <p className="text-center text-sm opacity-80 mb-6">{theme.platformTitle}</p>
+
+      {existing && (
+        <div className="mb-4 p-3 rounded-lg bg-amber-500/20 border border-amber-500/40 text-sm">
+          <p>
+            Already signed in as <strong>{existing.email}</strong> ({existing.role || 'no role'}).
+          </p>
+          <p className="mt-2 opacity-90">
+            To test a <strong>student</strong> account, log out first.
+          </p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <Link href={existing.home} className="underline">
+              Go to dashboard
+            </Link>
+            <Link href="/auth/logout" className="px-3 py-1 rounded-full border border-white/40 font-medium">
+              Log out
+            </Link>
+          </div>
+        </div>
+      )}
 
       {callbackError === 'auth_callback' && (
         <p className="mb-4 text-amber-200 text-sm">
