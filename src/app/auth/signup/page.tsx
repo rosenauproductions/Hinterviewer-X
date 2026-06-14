@@ -3,12 +3,12 @@
 import { useState } from 'react'
 import { getSupabaseBrowserClient } from '@/lib/supabase'
 import { homePathForRole } from '@/lib/auth-routing'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { PortalShell } from '@/components/portal-shell'
 import { useRouter } from 'next/navigation'
+import { getClientTheme } from '@/lib/theme'
 
 export default function SignupPage() {
+  const theme = getClientTheme()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [fullName, setFullName] = useState('')
@@ -50,7 +50,6 @@ export default function SignupPage() {
           .select('role')
           .eq('id', data.user.id)
           .maybeSingle()
-
         router.refresh()
         router.push(homePathForRole(profile?.role))
         return
@@ -67,63 +66,58 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle>Sign Up</CardTitle>
-          <CardDescription>Create your account to get started</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSignup} className="space-y-4">
-            <div>
-              <Input
-                type="text"
-                placeholder="Full Name"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                required
-              />
-            </div>
-            <div>
-              <Input
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-            <div>
-              <Input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                minLength={6}
-              />
-            </div>
-            {error && <p className="text-red-500 text-sm">{error}</p>}
-            {success && <p className="text-emerald-600 text-sm">{success}</p>}
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'Creating account...' : 'Sign Up'}
-            </Button>
-          </form>
-          <div className="mt-4 text-center space-y-2">
-            <p className="text-sm text-gray-600">
-              Already have an account?{' '}
-              <a href="/auth/login" className="text-blue-600 hover:underline">
-                Sign in
-              </a>
-            </p>
-            <p className="text-xs text-gray-500">
-              <a href="/qa" className="text-blue-600 hover:underline">
-                QA diagnostics
-              </a>
-            </p>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+    <PortalShell showBack={{ href: '/', label: 'Home' }}>
+      <div className="max-w-md mx-auto portal-glass rounded-2xl p-8">
+        <h2 className="text-2xl font-bold mb-2 text-center" style={{ color: theme.secondaryColor }}>
+          Create Account
+        </h2>
+        <p className="text-center text-sm opacity-80 mb-6">Student / applicant signup</p>
+
+        <form onSubmit={handleSignup} className="space-y-4">
+          <input
+            className="portal-input"
+            type="text"
+            placeholder="Full Name"
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            required
+          />
+          <input
+            className="portal-input"
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <input
+            className="portal-input"
+            type="password"
+            placeholder="Password (6+ chars)"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            minLength={6}
+          />
+          {error && <p className="text-red-300 text-sm">{error}</p>}
+          {success && <p className="text-emerald-300 text-sm">{success}</p>}
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full py-3 rounded-full font-semibold disabled:opacity-50"
+            style={{
+              background: `linear-gradient(to right, ${theme.primaryColor}, ${theme.secondaryColor})`,
+              color: theme.backgroundStart,
+            }}
+          >
+            {loading ? 'Creating account...' : 'Sign Up'}
+          </button>
+        </form>
+
+        <p className="mt-6 text-center text-sm opacity-80">
+          Have an account? <a href="/auth/login" className="underline">Sign in</a>
+        </p>
+      </div>
+    </PortalShell>
   )
 }

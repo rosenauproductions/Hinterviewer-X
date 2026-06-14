@@ -123,3 +123,54 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* MSC portal styles (ported from v78 — no fake DB) */
+.portal-glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+}
+
+.card-hover {
+  transition: all 0.3s ease-in-out;
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.recording-pulse {
+  animation: recording-pulse 1s infinite;
+}
+
+@keyframes recording-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.spinner {
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top: 4px solid #fff;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+video {
+  background-color: #000;
+}
+
+.portal-input {
+  @apply w-full p-3 border-2 border-white/20 rounded-lg bg-white/10 text-white placeholder-white/60 outline-none;
+}
+
+.portal-input:focus {
+  border-color: var(--client-accent, #bad3f7);
+  box-shadow: 0 0 0 3px rgba(186, 211, 247, 0.2);
+}

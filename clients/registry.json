@@ -16,9 +16,9 @@
       "name": "MSC Student Video Portal",
       "description": "MSC production — Supabase MSC-Student-Video-Portal",
       "supabaseProjectRef": "btnxghiwrgioceafzneh",
-      "logoUrl": "/logo.png",
-      "primaryColor": "#1e40af",
-      "secondaryColor": "#64748b",
+      "logoUrl": "/logo.svg",
+      "primaryColor": "#ad9b4e",
+      "secondaryColor": "#f0c938",
       "netlifySiteHint": "hinterviewer-x-msc1"
     },
     {
