@@ -1,9 +1,10 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { homePathForRole } from '@/lib/auth-routing'
 import { resolveSupabaseUrl } from '@/lib/clients'
 import { isSupabaseConfigured } from '@/lib/env'
 
-const PUBLIC_PATHS = ['/setup', '/api/health']
+const PUBLIC_PATHS = ['/setup', '/api/health', '/api/qa', '/qa', '/auth/callback']
 
 export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname
@@ -48,16 +49,20 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  if (request.nextUrl.pathname.startsWith('/applicant') && !user) {
+  if ((path.startsWith('/applicant') || path.startsWith('/admin')) && !user) {
     return NextResponse.redirect(new URL('/auth/login', request.url))
   }
 
-  if (request.nextUrl.pathname.startsWith('/admin') && !user) {
-    return NextResponse.redirect(new URL('/auth/login', request.url))
-  }
+  if (path.startsWith('/auth') && user && !path.startsWith('/auth/callback')) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .maybeSingle()
 
-  if (request.nextUrl.pathname.startsWith('/auth') && user) {
-    return NextResponse.redirect(new URL('/applicant/dashboard', request.url))
+    return NextResponse.redirect(
+      new URL(homePathForRole(profile?.role), request.url),
+    )
   }
 
   return response

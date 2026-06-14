@@ -1,5 +1,7 @@
-import { createClient } from '@/lib/supabase-server'
+import Link from 'next/link'
 import { redirect } from 'next/navigation'
+import { isAdminRole } from '@/lib/auth-routing'
+import { createClient } from '@/lib/supabase-server'
 
 export default async function ApplicantDashboard() {
   const supabase = await createClient()
@@ -14,10 +16,18 @@ export default async function ApplicantDashboard() {
     .from('profiles')
     .select('*')
     .eq('id', user.id)
-    .single()
+    .maybeSingle()
 
-  if (!profile || profile.role !== 'applicant') {
-    redirect('/auth/login')
+  if (!profile) {
+    redirect('/qa?issue=missing_profile')
+  }
+
+  if (isAdminRole(profile.role)) {
+    redirect('/admin/dashboard')
+  }
+
+  if (profile.role !== 'applicant') {
+    redirect('/qa?issue=missing_profile')
   }
 
   const { data: questions } = await supabase

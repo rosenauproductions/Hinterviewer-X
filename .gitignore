@@ -36,6 +36,7 @@ yarn-error.log*
 
 # local secrets copy (never commit)
 config/deployment.env
+scripts/create-admin-user.sql
 
 # vercel
 .vercel

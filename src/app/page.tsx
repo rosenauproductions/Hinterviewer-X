@@ -22,17 +22,31 @@ export default function Home() {
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Link
             href="/auth/login"
-            className="inline-flex h-11 items-center justify-center rounded-lg bg-zinc-900 px-6 text-sm font-medium text-white hover:bg-zinc-800"
+            className="inline-flex h-11 items-center justify-center rounded-lg px-6 text-sm font-medium text-white hover:opacity-90"
+            style={{ backgroundColor: config.client.primaryColor }}
           >
             Sign in
           </Link>
           <Link
             href="/auth/signup"
-            className="inline-flex h-11 items-center justify-center rounded-lg border border-zinc-300 px-6 text-sm font-medium text-zinc-900 hover:bg-zinc-100"
+            className="inline-flex h-11 items-center justify-center rounded-lg border px-6 text-sm font-medium hover:bg-zinc-100"
+            style={{
+              borderColor: config.client.secondaryColor,
+              color: config.client.primaryColor,
+            }}
           >
             Create account
           </Link>
         </div>
+        <p className="text-xs text-zinc-500">
+          <Link href="/qa" className="hover:underline" style={{ color: config.client.primaryColor }}>
+            QA diagnostics
+          </Link>
+          {' · '}
+          <Link href="/api/health" className="hover:underline" style={{ color: config.client.primaryColor }}>
+            API health
+          </Link>
+        </p>
       </main>
     </div>
   )

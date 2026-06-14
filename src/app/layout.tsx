@@ -27,6 +27,12 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        style={
+          {
+            '--client-primary': config.client.primaryColor,
+            '--client-secondary': config.client.secondaryColor,
+          } as React.CSSProperties
+        }
       >
         {children}
       </body>

@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { createSupabaseBrowserClient } from '@/lib/supabase'
+import { homePathForRole } from '@/lib/auth-routing'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -13,37 +14,53 @@ export default function SignupPage() {
   const [fullName, setFullName] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
   const router = useRouter()
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError('')
+    setSuccess('')
 
     try {
       const supabase = createSupabaseBrowserClient()
-      const { data, error } = await supabase.auth.signUp({
+      const { data, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          data: {
-            full_name: fullName,
-          },
+          data: { full_name: fullName },
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
         },
       })
 
-      if (error) {
-        setError(error.message)
-      } else if (data.user) {
-        // Check if email confirmation is required
-        if (data.user.email_confirmed_at) {
-          router.push('/applicant/dashboard')
-        } else {
-          setError('Check your email to confirm your account')
-        }
+      if (signUpError) {
+        setError(signUpError.message)
+        return
       }
-    } catch (error) {
-      setError('An unexpected error occurred')
+
+      if (!data.user) {
+        setError('Signup did not return a user — check /qa')
+        return
+      }
+
+      if (data.user.email_confirmed_at || data.session) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', data.user.id)
+          .maybeSingle()
+
+        router.refresh()
+        router.push(homePathForRole(profile?.role))
+        return
+      }
+
+      setSuccess(
+        'Account created. Check your email to confirm, then sign in. (Or disable email confirm in Supabase Auth for dev.)',
+      )
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An unexpected error occurred')
     } finally {
       setLoading(false)
     }
@@ -54,9 +71,7 @@ export default function SignupPage() {
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>Sign Up</CardTitle>
-          <CardDescription>
-            Create your account to get started
-          </CardDescription>
+          <CardDescription>Create your account to get started</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSignup} className="space-y-4">
@@ -89,15 +104,21 @@ export default function SignupPage() {
               />
             </div>
             {error && <p className="text-red-500 text-sm">{error}</p>}
+            {success && <p className="text-emerald-600 text-sm">{success}</p>}
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? 'Creating account...' : 'Sign Up'}
             </Button>
           </form>
-          <div className="mt-4 text-center">
+          <div className="mt-4 text-center space-y-2">
             <p className="text-sm text-gray-600">
               Already have an account?{' '}
               <a href="/auth/login" className="text-blue-600 hover:underline">
                 Sign in
+              </a>
+            </p>
+            <p className="text-xs text-gray-500">
+              <a href="/qa" className="text-blue-600 hover:underline">
+                QA diagnostics
               </a>
             </p>
           </div>
