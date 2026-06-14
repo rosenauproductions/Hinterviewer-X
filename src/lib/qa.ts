@@ -219,6 +219,15 @@ export async function runQaChecks(siteOrigin?: string): Promise<QaReport> {
   }
 
   push(checks, {
+    id: 'auth-schema-null-tokens',
+    label: 'Auth users schema (manual SQL)',
+    status: 'info',
+    detail:
+      'If login shows "Database error querying schema", run supabase-fix-auth-users.sql in Supabase SQL Editor',
+    hint: 'Caused by NULL confirmation_token etc. on users created via SQL',
+  })
+
+  push(checks, {
     id: 'signup-email-confirm',
     label: 'Signup email confirmation',
     status: 'info',
