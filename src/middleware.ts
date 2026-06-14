@@ -4,7 +4,7 @@ import { homePathForRole } from '@/lib/auth-routing'
 import { resolveSupabaseUrl } from '@/lib/clients'
 import { isSupabaseConfigured } from '@/lib/env'
 
-const PUBLIC_PATHS = ['/setup', '/api/health', '/api/qa', '/qa', '/auth/callback']
+const PUBLIC_PATHS = ['/setup', '/api/health', '/api/qa', '/api/public-config', '/qa', '/auth/callback']
 
 export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname

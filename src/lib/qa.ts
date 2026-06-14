@@ -178,6 +178,14 @@ export async function runQaChecks(siteOrigin?: string): Promise<QaReport> {
     hint: 'If login still loops, check profiles row exists for the user',
   })
 
+  push(checks, {
+    id: 'browser-config',
+    label: 'Browser Supabase config',
+    status: 'ok',
+    detail: 'Loaded via /api/public-config at runtime (no build-time NEXT_PUBLIC embed required)',
+    hint: 'If login fails, redeploy Netlify after setting env vars',
+  })
+
   if (siteOrigin) {
     push(checks, {
       id: 'auth-supabase-urls',

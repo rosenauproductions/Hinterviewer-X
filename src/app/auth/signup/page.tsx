@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { createSupabaseBrowserClient } from '@/lib/supabase'
+import { getSupabaseBrowserClient } from '@/lib/supabase'
 import { homePathForRole } from '@/lib/auth-routing'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -24,7 +24,7 @@ export default function SignupPage() {
     setSuccess('')
 
     try {
-      const supabase = createSupabaseBrowserClient()
+      const supabase = await getSupabaseBrowserClient()
       const { data, error: signUpError } = await supabase.auth.signUp({
         email,
         password,

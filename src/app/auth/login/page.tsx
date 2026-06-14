@@ -1,7 +1,7 @@
 'use client'
 
 import { Suspense, useState } from 'react'
-import { createSupabaseBrowserClient } from '@/lib/supabase'
+import { getSupabaseBrowserClient } from '@/lib/supabase'
 import { homePathForRole } from '@/lib/auth-routing'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -19,7 +19,7 @@ function LoginForm() {
   const callbackError = searchParams.get('error')
 
   const redirectAfterAuth = async () => {
-    const supabase = createSupabaseBrowserClient()
+    const supabase = await getSupabaseBrowserClient()
     const {
       data: { user },
     } = await supabase.auth.getUser()
@@ -49,7 +49,7 @@ function LoginForm() {
     setError('')
 
     try {
-      const supabase = createSupabaseBrowserClient()
+      const supabase = await getSupabaseBrowserClient()
       const { error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -78,7 +78,7 @@ function LoginForm() {
     setError('')
 
     try {
-      const supabase = createSupabaseBrowserClient()
+      const supabase = await getSupabaseBrowserClient()
       const { error: otpError } = await supabase.auth.signInWithOtp({
         email,
         options: {

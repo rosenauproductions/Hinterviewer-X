@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { createSupabaseBrowserClient } from '@/lib/supabase'
+import { getSupabaseBrowserClient } from '@/lib/supabase'
 import { homePathForRole, isAdminRole } from '@/lib/auth-routing'
 
 export function QaSessionPanel() {
@@ -19,7 +19,7 @@ export function QaSessionPanel() {
 
     async function load() {
       try {
-        const supabase = createSupabaseBrowserClient()
+        const supabase = await getSupabaseBrowserClient()
         const {
           data: { user },
           error: userErr,
