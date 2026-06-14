@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { adminFetch } from '@/lib/admin-fetch'
 
 interface Question {
   id: number
@@ -17,7 +18,7 @@ export function AdminQuestionsPanel() {
 
   const load = async () => {
     setLoading(true)
-    const res = await fetch('/api/admin/questions')
+    const res = await adminFetch('/api/admin/questions')
     const data = await res.json()
     if (!res.ok) setError(data.error || 'Failed to load')
     else setQuestions(data.questions || [])
@@ -31,7 +32,7 @@ export function AdminQuestionsPanel() {
   const addQuestion = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!newText.trim()) return
-    const res = await fetch('/api/admin/questions', {
+    const res = await adminFetch('/api/admin/questions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ text: newText }),
@@ -46,7 +47,7 @@ export function AdminQuestionsPanel() {
   }
 
   const toggleActive = async (q: Question) => {
-    await fetch('/api/admin/questions', {
+    await adminFetch('/api/admin/questions', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id: q.id, active: !q.active }),
@@ -59,12 +60,12 @@ export function AdminQuestionsPanel() {
     const swap = questions[idx + dir]
     if (!swap) return
     await Promise.all([
-      fetch('/api/admin/questions', {
+      adminFetch('/api/admin/questions', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: q.id, order_index: swap.order_index }),
       }),
-      fetch('/api/admin/questions', {
+      adminFetch('/api/admin/questions', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: swap.id, order_index: q.order_index }),
@@ -75,7 +76,7 @@ export function AdminQuestionsPanel() {
 
   const deleteQuestion = async (id: number) => {
     if (!confirm('Delete this question?')) return
-    const res = await fetch(`/api/admin/questions?id=${id}`, { method: 'DELETE' })
+    const res = await adminFetch(`/api/admin/questions?id=${id}`, { method: 'DELETE' })
     if (!res.ok) {
       const data = await res.json()
       setError(data.error || 'Delete failed')

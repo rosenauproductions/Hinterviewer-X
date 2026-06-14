@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { adminFetch } from '@/lib/admin-fetch'
 
 interface UserRow {
   id: string
@@ -24,7 +25,7 @@ export function AdminUsersPanel() {
 
   const load = async () => {
     setLoading(true)
-    const res = await fetch('/api/admin/users')
+    const res = await adminFetch('/api/admin/users')
     const data = await res.json()
     if (!res.ok) setError(data.error || 'Failed to load users')
     else setUsers(data.users || [])
@@ -38,7 +39,7 @@ export function AdminUsersPanel() {
   const createUser = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
-    const res = await fetch('/api/admin/users', {
+    const res = await adminFetch('/api/admin/users', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(form),
@@ -53,7 +54,7 @@ export function AdminUsersPanel() {
   }
 
   const updateRole = async (id: string, role: string) => {
-    const res = await fetch('/api/admin/users', {
+    const res = await adminFetch('/api/admin/users', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id, role }),
@@ -68,7 +69,7 @@ export function AdminUsersPanel() {
 
   const deleteUser = async (id: string, email: string) => {
     if (!confirm(`Delete ${email}? This removes their Supabase Auth account.`)) return
-    const res = await fetch(`/api/admin/users?id=${id}`, { method: 'DELETE' })
+    const res = await adminFetch(`/api/admin/users?id=${id}`, { method: 'DELETE' })
     if (!res.ok) {
       const data = await res.json()
       setError(data.error || 'Delete failed')

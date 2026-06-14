@@ -3,8 +3,8 @@ import { requireAdminSession } from '@/lib/admin-auth'
 
 export const dynamic = 'force-dynamic'
 
-export async function GET() {
-  const session = await requireAdminSession()
+export async function GET(request: Request) {
+  const session = await requireAdminSession(request)
   if (session.error) return session.error
 
   const { data: profiles, error: profileError } = await session.service
@@ -41,7 +41,7 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const session = await requireAdminSession()
+  const session = await requireAdminSession(request)
   if (session.error) return session.error
 
   const body = await request.json()
@@ -87,7 +87,7 @@ export async function POST(request: Request) {
 }
 
 export async function PATCH(request: Request) {
-  const session = await requireAdminSession()
+  const session = await requireAdminSession(request)
   if (session.error) return session.error
 
   const body = await request.json()
@@ -126,7 +126,7 @@ export async function PATCH(request: Request) {
 }
 
 export async function DELETE(request: Request) {
-  const session = await requireAdminSession()
+  const session = await requireAdminSession(request)
   if (session.error) return session.error
 
   const { searchParams } = new URL(request.url)
