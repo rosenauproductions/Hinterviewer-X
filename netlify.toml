@@ -1,0 +1,16 @@
+[build]
+  command = "npm run build"
+
+[build.environment]
+  NODE_VERSION = "20"
+  # Supabase credentials are NOT stored here — set in Netlify UI:
+  # Site configuration → Environment variables
+  # See config/deployment.env.example and DEPLOYMENT.md
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# Optional: document non-secret branding (override in Netlify UI per client)
+# [context.production.environment]
+#   NEXT_PUBLIC_CLIENT_NAME = "Hinterviewer X"
+#   NEXT_PUBLIC_DEPLOYMENT_ENV = "production"

@@ -118,6 +118,22 @@ ALTER TABLE asset_videos ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies
 
+-- SECURITY DEFINER helper avoids infinite recursion when admin policies read profiles
+CREATE OR REPLACE FUNCTION public.is_admin()
+RETURNS boolean
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = public
+STABLE
+AS $$
+  SELECT EXISTS (
+    SELECT 1
+    FROM public.profiles
+    WHERE id = auth.uid()
+      AND role IN ('low_admin', 'super_admin')
+  );
+$$;
+
 -- Profiles: Users can read/update their own profile, admins can read all
 CREATE POLICY "Users can view own profile" ON profiles
   FOR SELECT USING (auth.uid() = id);
@@ -126,100 +142,61 @@ CREATE POLICY "Users can update own profile" ON profiles
   FOR UPDATE USING (auth.uid() = id);
 
 CREATE POLICY "Admins can view all profiles" ON profiles
-  FOR SELECT USING (
-    EXISTS (
-      SELECT 1 FROM profiles p
-      WHERE p.id = auth.uid() AND p.role IN ('low_admin', 'super_admin')
-    )
-  );
+  FOR SELECT USING (public.is_admin());
 
 CREATE POLICY "Admins can update profiles" ON profiles
-  FOR UPDATE USING (
-    EXISTS (
-      SELECT 1 FROM profiles p
-      WHERE p.id = auth.uid() AND p.role IN ('low_admin', 'super_admin')
-    )
-  );
+  FOR UPDATE USING (public.is_admin());
 
 -- Social links: Users can manage their own
 CREATE POLICY "Users can manage own social links" ON social_links
   FOR ALL USING (auth.uid() = applicant_id);
 
 CREATE POLICY "Admins can view all social links" ON social_links
-  FOR SELECT USING (
-    EXISTS (
-      SELECT 1 FROM profiles p
-      WHERE p.id = auth.uid() AND p.role IN ('low_admin', 'super_admin')
-    )
-  );
+  FOR SELECT USING (public.is_admin());
 
 -- Questions: Anyone can read, only admins can modify
 CREATE POLICY "Anyone can read questions" ON questions
   FOR SELECT USING (true);
 
-CREATE POLICY "Admins can manage questions" ON questions
-  FOR ALL USING (
-    EXISTS (
-      SELECT 1 FROM profiles p
-      WHERE p.id = auth.uid() AND p.role IN ('low_admin', 'super_admin')
-    )
-  );
+CREATE POLICY "Admins can insert questions" ON questions
+  FOR INSERT WITH CHECK (public.is_admin());
+
+CREATE POLICY "Admins can update questions" ON questions
+  FOR UPDATE USING (public.is_admin());
+
+CREATE POLICY "Admins can delete questions" ON questions
+  FOR DELETE USING (public.is_admin());
 
 -- Video answers: Users can manage their own, admins can view all
 CREATE POLICY "Users can manage own video answers" ON video_answers
   FOR ALL USING (auth.uid() = applicant_id);
 
 CREATE POLICY "Admins can view all video answers" ON video_answers
-  FOR SELECT USING (
-    EXISTS (
-      SELECT 1 FROM profiles p
-      WHERE p.id = auth.uid() AND p.role IN ('low_admin', 'super_admin')
-    )
-  );
+  FOR SELECT USING (public.is_admin());
 
 -- Playlist templates: Admins can manage
 CREATE POLICY "Admins can manage playlist templates" ON playlist_templates
-  FOR ALL USING (
-    EXISTS (
-      SELECT 1 FROM profiles p
-      WHERE p.id = auth.uid() AND p.role IN ('low_admin', 'super_admin')
-    )
-  );
+  FOR ALL USING (public.is_admin());
 
 -- Applicant playlists: Users can view their own, admins can view all
 CREATE POLICY "Users can view own playlists" ON applicant_playlists
   FOR SELECT USING (auth.uid() = applicant_id);
 
 CREATE POLICY "Admins can view all playlists" ON applicant_playlists
-  FOR SELECT USING (
-    EXISTS (
-      SELECT 1 FROM profiles p
-      WHERE p.id = auth.uid() AND p.role IN ('low_admin', 'super_admin')
-    )
-  );
+  FOR SELECT USING (public.is_admin());
 
 CREATE POLICY "Users can manage own playlists" ON applicant_playlists
   FOR ALL USING (auth.uid() = applicant_id);
 
 -- Campaigns: Admins can manage
 CREATE POLICY "Admins can manage campaigns" ON campaigns
-  FOR ALL USING (
-    EXISTS (
-      SELECT 1 FROM profiles p
-      WHERE p.id = auth.uid() AND p.role IN ('low_admin', 'super_admin')
-    )
-  );
+  FOR ALL USING (public.is_admin());
 
 -- Campaign applicants: Related policies above
 
 -- Asset videos: Admins can manage
 CREATE POLICY "Admins can manage asset videos" ON asset_videos
-  FOR ALL USING (
-    EXISTS (
-      SELECT 1 FROM profiles p
-      WHERE p.id = auth.uid() AND p.role IN ('low_admin', 'super_admin')
-    )
-  );
+  FOR ALL USING (public.is_admin());
 
 -- Function to handle profile creation on signup
 CREATE OR REPLACE FUNCTION public.handle_new_user()

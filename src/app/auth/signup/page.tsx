@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { supabase } from '@/lib/supabase'
+import { createSupabaseBrowserClient } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -21,6 +21,7 @@ export default function SignupPage() {
     setError('')
 
     try {
+      const supabase = createSupabaseBrowserClient()
       const { data, error } = await supabase.auth.signUp({
         email,
         password,

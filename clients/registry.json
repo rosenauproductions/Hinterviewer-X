@@ -1,0 +1,35 @@
+{
+  "$schema": "./registry.schema.json",
+  "clients": [
+    {
+      "id": "default",
+      "name": "Hinterviewer X",
+      "description": "Default / demo tenant",
+      "supabaseProjectRef": "",
+      "logoUrl": "/logo.png",
+      "primaryColor": "#3b82f6",
+      "secondaryColor": "#64748b",
+      "netlifySiteHint": "hinterviewer-x-default"
+    },
+    {
+      "id": "msc1",
+      "name": "MSC Student Video Portal",
+      "description": "MSC production — Supabase MSC-Student-Video-Portal",
+      "supabaseProjectRef": "btnxghiwrgioceafzneh",
+      "logoUrl": "/logo.png",
+      "primaryColor": "#1e40af",
+      "secondaryColor": "#64748b",
+      "netlifySiteHint": "hinterviewer-x-msc1"
+    },
+    {
+      "id": "msc-dev",
+      "name": "MSC Student Portfolio (Dev)",
+      "description": "MSC staging / development",
+      "supabaseProjectRef": "",
+      "logoUrl": "/logo.png",
+      "primaryColor": "#1e40af",
+      "secondaryColor": "#94a3b8",
+      "netlifySiteHint": "hinterviewer-x-msc-dev"
+    }
+  ]
+}
